@@ -1,0 +1,195 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml/DTD/xhtml1 transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Chapter 10 - Statewide Realty</title>
+  <script defer>
+    var scrollMsg = " ** Takle advantage of the current low interest rate! **";
+    var beginPus = 0;
+    
+    function scrollingMsg() {
+      // console.log(document.msgForm.ScrollingMsg.value)
+      document.msgForm.ScrollingMsg.value = scrollMsg.substring(beginPus, scrollMsg.length) + scrollMsg.substring(0, beginPus);
+      beginPus += 1;
+      
+      if(beginPus > scrollMsg.length) beginPus = 0;
+
+      window.setTimeout("scrollingMsg()",200);
+    }
+
+    function calc(myForm) {
+      let amount = parseInt(document.MortCalc.Amount.value, 10);
+      
+      if (isNaN(amount) || amount <= 0) {
+        alert("The loan amount is not a valid number!");
+        document.MortCalc.Amount.value = "";
+        document.MortCalc.Amount.focus;
+      } else {
+        let rate = parseFloat(document.MortCalc.Rate.value)
+        if(isNaN(rate) || rate <= 0){
+          alert("The interest rate is not valid number!");
+          document.MortCalc.Rate.value = "";
+          document.MortCalc.Rate.focus;
+        } else {
+          let years = parseInt(document.MortCalc.Years.value);
+          if(isNaN(years) || years <= 0){
+            alert("The number of years is not valid number!");
+            document.MortCalc.Years.value = "";
+            document.MortCalc.Years.focus;
+          } else {
+            document.MortCalc.Payment.value = dollarFormat((monthly(amount, rate, years)).toString());
+          }
+          // console.log(amount, rate, years)
+        }
+      }
+    }
+
+    function monthly(amount, rate, years) {
+      let r = rate / 1200;
+      let m = years * 12;
+      return (amount * (r / (1 - (1 / Math.pow(1 + r, m))))).toFixed(2);
+    }
+
+    function dollarFormat(valuein){
+      let formatStr = "";
+      let outdollars = "";
+      let decipos = valuein.indexOf(".");
+      
+      if(decipos == -1) decipos = valuein.length;
+      
+      let dollars = valuein.substring(0, decipos);
+      let dollen = dollars.length;
+
+      if(dollen > 3) {
+        while(dollen > 0) {
+          let tDollars = dollars.substring(dollen - 3, dollen);
+          if(tDollars.length == 3) {
+            outdollars = "," + tDollars + outdollars;
+            dollen -= 3; 
+          } else {
+            outdollars = tDollars + outdollars;
+            dollen = 0;
+          }
+        }
+      } else {
+        outdollars = valuein.substring(0, decipos);
+      }
+
+      if (outdollars.substring(0,1) == ",") dollars = outdollars.substring(1, outdollars.length);
+      else dollars = outdollars;
+
+      let cents = valuein.substring(decipos + 1, decipos + 3);
+      return "$" + dollars + "." + cents;
+    }
+
+    function popupAd(){
+      open("chapter10notice.html", "noticeWin", "width=550, height=390");
+    }
+
+  </script>
+  <style type="text/css">
+    .style1 {
+      font-size: x-large;
+      font-weight: bold;
+      color: #3399FE;
+    }
+
+    .style2 {
+      color: #3366FF
+    }
+
+    body {
+      background-image: url(chapter10bkgrnd.jpg);
+      background-position: center;
+    }
+
+    .style3 {
+      color: #000000;
+    }
+
+    .custom {
+      width: 700px;
+      margin: 0 auto;
+    }
+
+    .copyright {
+      font-family: Arial, sans-serif;
+      font-size: xx-small;
+      color: #0000ff;
+    }
+
+  </style>
+</head>
+
+<body onload="scrollingMsg(); popupAd()">
+  <table width="75%" border="0" align="center">
+    <tr>
+      <td>
+        <p align="center"><img src="chapter10banner.jpg" alt="banner" /></p>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <div align="center">
+          <form name="msgForm" action="">
+            <input type="text" name="ScrollingMsg" size="" 25>
+          </form>
+        </div>
+      </td>
+    </tr>
+  </table>
+  <p align="center"><img src="divider-blue-3.jpg" alt="divider" /></p>
+  <p align="center" class="style1 style2">Estimate Mortgage Payments</p>
+  <p class="custom">
+    Enter the Amount of the Mortgage, press the TAB key, enter the Interest Rate as indicated, press the TAB key again,
+    and then enter the Number of Years for the loan.
+    Click the Calculate button to see your estimated monthly payment.
+  </p>
+  <p align="center"><img src="divider-blue-3.jpg" alt="divider" /></p>
+  <form name="MortCalc" id="MortCalc" action="">
+    <table width="345" border="0" align="center" cellspacing="5">
+      <tr>
+        <td width="185">
+          <div align="right">Amount of Mortgage:</div>
+        </td>
+        <td width="141"><input type="text" name="Amount" value=" " size="9" /></td>
+      </tr>
+      <tr>
+        <td>Interest Rate as % (e.g. 7.9):</td>
+        <td><input type="text" name="Rate" value=" " size="9" /></td>
+      </tr>
+      <tr>
+        <td>
+          <div align="right">Number of Years:</div>
+        </td>
+        <td><input type="text" name="Years" value=" " size="9" /></td>
+      </tr>
+      <tr>
+        <td>
+          <div align="right">
+            <input type="button" value="Calculate" onclick="calc(MortCalc)"/>
+          </div>
+        </td>
+        <td><input type="reset" name="reset" id="reset" value="Reset" /></td>
+      </tr>
+      <tr>
+        <td>
+          <div align="right">Monthly Payment:</div>
+        </td>
+        <td><input type="text" name="Payment" value=" " size="12" /></td>
+      </tr>
+    </table>
+  </form>
+  <div align="center">
+    <img src="divider-blue-3.jpg" alt="divider" width="700" height="5" />
+  </div>
+  <div class="custom">
+    <script>
+      document.write("<p class='copyright'>")
+      document.write("Statewide Realty, Copyright 2022-2023<br>")
+      document.write("This document was last modified: " + document.lastModified.substring(0,10) + "</p>")
+    </script>  
+  </div>
+</body>
+</html>
